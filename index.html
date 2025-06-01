@@ -21,7 +21,7 @@
             @apply bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center space-x-2 text-lg; /* Zwiększony padding i rozmiar tekstu dla lepszych celów dotykowych */
         }
         .btn-danger {
-            @apply bg-red-500 hover:bg-ared-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out;
+            @apply bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out;
         }
         /* Style dla pól input */
         .input-field {
@@ -249,8 +249,10 @@
 
             const username = document.getElementById('registerUsername').value;
             const password = document.getElementById('registerPassword').value;
+            const urlParams = new URLSearchParams(window.location.search);
+            const referrerRefId = urlParams.get('ref'); // Get referrer ID from URL if present
 
-            // Frontend validation for length (moved here for better placement)
+            // Frontend validation for length
             if (username.length < 3 || username.length > 20) {
                 showMessage('Nazwa użytkownika musi mieć od 3 do 20 znaków.');
                 hideLoading(registerButton, registerButtonText, registerSpinner);
@@ -266,7 +268,7 @@
                 const response = await fetch(`${BACKEND_API_URL}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ username, password, referrer_ref_id: referrerRefId }) // Pass referrer ID
                 });
                 const data = await response.json();
                 if (response.ok) {

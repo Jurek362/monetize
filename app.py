@@ -11,8 +11,8 @@ app = Flask(__name__)
 CORS(app) 
 
 # Use a strong, random key in a production environment!
-app.config['SECRET_KEY'] = 'your_very_secret_session_key_for_production'
-app.config['JWT_SECRET_KEY'] = 'another_very_secret_jwt_key_for_production' 
+app.config['SECRET_KEY'] = b'\xc5\x1eG\xc1\xaa\xd8\x12C\xbd\x9a\xcb\xbc\xba\xf2\x05\x05\xba\xdd\x08u\xf9\xa6\x0c\x11'
+app.config['JWT_SECRET_KEY'] = 'f8b1a3d9e2c0b5f7a1e3c5d7b9f0a2e4d6c8e0a2b4f6d8e0c2a4b6f8d0a1b3c5'
 app.config['JWT_EXPIRATION_DAYS'] = 1 
 
 # --- Database Simulation (for demonstration purposes) ---

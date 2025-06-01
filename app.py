@@ -1,45 +1,48 @@
 # app.py
 from flask import Flask, request, jsonify, session, redirect, url_for
+from flask_cors import CORS 
 import uuid
 import hashlib
 import datetime
-import jwt # pip install PyJWT
+import jwt 
 from functools import wraps
 
 app = Flask(__name__)
-# Użyj silnego, losowego klucza w środowisku produkcyjnym!
-app.config['SECRET_KEY'] = 'twoj_bardzo_tajny_klucz_bezpieczenstwa_do_sesji_i_jwt'
-app.config['JWT_SECRET_KEY'] = 'inny_bardzo_tajny_klucz_do_jwt' # Klucz do podpisywania JWT
-app.config['JWT_EXPIRATION_DAYS'] = 1 # Token wygasa po 1 dniu
+CORS(app) 
 
-# --- Symulacja bazy danych (do celów demonstracyjnych) ---
-# W prawdziwej aplikacji użyłbyś bazy danych (np. PostgreSQL, MySQL, SQLite, MongoDB)
-# i ORM (np. SQLAlchemy, Peewee) do zarządzania danymi.
+# Use a strong, random key in a production environment!
+app.config['SECRET_KEY'] = 'your_very_secret_session_key_for_production'
+app.config['JWT_SECRET_KEY'] = 'another_very_secret_jwt_key_for_production' 
+app.config['JWT_EXPIRATION_DAYS'] = 1 
 
-# Słownik użytkowników: {username: {'password_hash': '...', 'referral_id': '...'}}
+# --- Database Simulation (for demonstration purposes) ---
+# In a real application, you would use a database (e.g., PostgreSQL, MySQL, SQLite, MongoDB)
+# and an ORM (e.g., SQLAlchemy, Peewee) to manage data.
+
+# User dictionary: {username: {'password_hash': '...', 'referral_id': '...'}}
 users_db = {}
-# Słownik kliknięć: {referral_id: [{'ip': '...', 'timestamp': '...'}, ...]}
+# Clicks dictionary: {referral_id: [{'ip': '...', 'timestamp': '...'}, ...]}
 clicks_db = {}
-# Słownik do śledzenia unikalnych kliknięć z IP w ciągu 24h:
+# Dictionary to track unique clicks from an IP within 24h:
 # {referral_id: {'ip_address': 'last_click_timestamp', ...}}
 unique_ip_clicks_tracker = {}
 
-# Stawka za kliknięcie (0.01 centa = 1 jednostka, np. 1/100 dolara)
-# Przechowujemy w centach, aby uniknąć problemów z zmiennoprzecinkowymi
-CLICK_EARNINGS_CENTS = 1 # 1 cent = 0.01 dolara
+# Earnings per click (0.01 cent = 1 unit, e.g., 1/100 of a dollar)
+# Stored in cents to avoid floating-point issues
+CLICK_EARNINGS_CENTS = 1 
 
-# --- Funkcje pomocnicze ---
+# --- Helper Functions ---
 
 def hash_password(password):
-    """Haszuje hasło za pomocą SHA256."""
+    """Hashes the password using SHA256."""
     return hashlib.sha256(password.encode('utf-8')).hexdigest()
 
 def generate_referral_id():
-    """Generuje unikalny ID polecający."""
-    return str(uuid.uuid4())[:8] # Krótszy ID dla czytelności
+    """Generates a unique referral ID."""
+    return str(uuid.uuid4())[:8] 
 
 def create_jwt_token(user_id, username):
-    """Tworzy token JWT."""
+    """Creates a JWT token."""
     expiration_time = datetime.datetime.utcnow() + datetime.timedelta(days=app.config['JWT_EXPIRATION_DAYS'])
     payload = {
         'user_id': user_id,
@@ -50,59 +53,56 @@ def create_jwt_token(user_id, username):
     return token
 
 def verify_jwt_token(token):
-    """Weryfikuje token JWT i zwraca payload."""
+    """Verifies the JWT token and returns the payload."""
     try:
         payload = jwt.decode(token, app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
         return payload
     except jwt.ExpiredSignatureError:
-        return {'error': 'Token wygasł.'}
+        return {'error': 'Token has expired.'}
     except jwt.InvalidTokenError:
-        return {'error': 'Nieprawidłowy token.'}
+        return {'error': 'Invalid token.'}
 
 def login_required(f):
-    """Dekorator do ochrony endpointów wymagających logowania."""
+    """Decorator to protect endpoints requiring login."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         auth_header = request.headers.get('Authorization')
         if not auth_header:
-            return jsonify({'error': 'Brak tokena uwierzytelniającego.'}), 401
+            return jsonify({'error': 'Authentication token is missing.'}), 401
 
         try:
-            token = auth_header.split(" ")[1] # Oczekujemy formatu "Bearer <token>"
+            token = auth_header.split(" ")[1] 
         except IndexError:
-            return jsonify({'error': 'Nieprawidłowy format tokena uwierzytelniającego.'}), 401
+            return jsonify({'error': 'Invalid authentication token format.'}), 401
 
         payload = verify_jwt_token(token)
         if 'error' in payload:
             return jsonify(payload), 401
 
-        request.user = payload # Dodaj payload tokena do obiektu request
+        request.user = payload 
         return f(*args, **kwargs)
     return decorated_function
 
-# --- Endpointy API ---
+# --- API Endpoints ---
 
 @app.route('/')
 def index():
-    """Główna strona aplikacji. Może służyć do serwowania pliku HTML."""
-    # W środowisku produkcyjnym, zazwyczaj używasz `send_from_directory`
-    # lub serwera Nginx/Apache do serwowania statycznych plików.
-    # Na potrzeby tego przykładu, zakładamy, że plik HTML jest serwowany oddzielnie
-    # lub jako część aplikacji Flask.
-    return "Serwer działa. Przejdź do pliku HTML w przeglądarce."
+    """Main page of the application. Can serve the HTML file."""
+    
+    return jsonify({'message': 'Backend is running. Access the frontend at aw0.fun.'}), 200
 
 @app.route('/register', methods=['POST'])
 def register():
-    """Endpoint do rejestracji nowego użytkownika."""
+    """Endpoint for user registration."""
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
 
     if not username or not password:
-        return jsonify({'error': 'Nazwa użytkownika i hasło są wymagane.'}), 400
+        return jsonify({'error': 'Username and password are required.'}), 400
 
     if username in users_db:
-        return jsonify({'error': 'Nazwa użytkownika już istnieje.'}), 409
+        return jsonify({'error': 'Username already exists.'}), 409
 
     hashed_password = hash_password(password)
     referral_id = generate_referral_id()
@@ -111,101 +111,91 @@ def register():
         'password_hash': hashed_password,
         'referral_id': referral_id
     }
-    clicks_db[referral_id] = [] # Inicjalizuj listę kliknięć dla nowego użytkownika
-    unique_ip_clicks_tracker[referral_id] = {} # Inicjalizuj tracker IP
+    clicks_db[referral_id] = [] 
+    unique_ip_clicks_tracker[referral_id] = {} 
 
-    print(f"Zarejestrowano użytkownika: {username} z ID: {referral_id}")
-    return jsonify({'message': 'Rejestracja pomyślna. Możesz się zalogować.'}), 201
+    print(f"User registered: {username} with ID: {referral_id}")
+    return jsonify({'message': 'Registration successful. You can now log in.'}), 201
 
 @app.route('/login', methods=['POST'])
 def login():
-    """Endpoint do logowania użytkownika."""
+    """Endpoint for user login."""
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
 
     if not username or not password:
-        return jsonify({'error': 'Nazwa użytkownika i hasło są wymagane.'}), 400
+        return jsonify({'error': 'Username and password are required.'}), 400
 
     user_data = users_db.get(username)
     if not user_data or user_data['password_hash'] != hash_password(password):
-        return jsonify({'error': 'Nieprawidłowa nazwa użytkownika lub hasło.'}), 401
+        return jsonify({'error': 'Invalid username or password.'}), 401
 
-    # Generowanie tokena JWT po pomyślnym logowaniu
     token = create_jwt_token(user_data['referral_id'], username)
-    return jsonify({'message': 'Logowanie pomyślne.', 'token': token}), 200
+    return jsonify({'message': 'Login successful.', 'token': token}), 200
 
 @app.route('/dashboard', methods=['GET'])
 @login_required
 def dashboard():
-    """Endpoint do pobierania danych panelu użytkownika."""
-    user_id = request.user['user_id'] # Pobierz ID użytkownika z tokena JWT
+    """Endpoint to retrieve user dashboard data."""
+    user_id = request.user['user_id'] 
     username = request.user['username']
 
     user_clicks = clicks_db.get(user_id, [])
-    # Filtruj kliknięcia, które są unikalne i aktualne (np. z ostatnich 24h)
-    # W tym prostym przykładzie, `clicks_db` zawiera już tylko "unikalne" kliknięcia
-    # zgodnie z logiką `track_click`.
-    # W bardziej zaawansowanym systemie, tutaj mogłaby być dodatkowa logika filtrowania
-    # i agregacji danych z bazy.
-
-    # Liczymy kliknięcia i zarobki
+    
     total_clicks = len(user_clicks)
-    total_earnings = total_clicks * CLICK_EARNINGS_CENTS # Zarobki w centach
+    total_earnings = total_clicks * CLICK_EARNINGS_CENTS 
 
     return jsonify({
         'username': username,
         'referral_id': user_id,
         'clicks': total_clicks,
-        'earnings': total_earnings # Zarobki w centach
+        'earnings': total_earnings 
     }), 200
 
 @app.route('/track_click', methods=['POST'])
 def track_click():
     """
-    Endpoint do śledzenia kliknięć w linki polecające.
-    Implementuje podstawową logikę anty-fraudową:
-    - Liczy tylko unikalne kliknięcia z danego IP dla danego referral_id w ciągu 24 godzin.
+    Endpoint to track clicks on referral links.
+    Implements basic anti-fraud logic:
+    - Counts only unique clicks from a given IP for a given referral_id within 24 hours.
     """
     data = request.get_json()
     referral_id = data.get('referral_id')
-    client_ip = request.remote_addr # Pobierz adres IP klienta
+    client_ip = request.remote_addr 
 
     if not referral_id:
-        return jsonify({'error': 'Brak ID polecającego.'}), 400
+        return jsonify({'error': 'Referral ID is missing.'}), 400
 
     if referral_id not in clicks_db:
-        # Jeśli ID polecającego nie istnieje, ignoruj kliknięcie
-        # lub zwróć błąd, w zależności od polityki.
-        # Na potrzeby anty-fraud, lepiej ignorować.
-        print(f"Nieznany referral_id: {referral_id}. Kliknięcie z IP {client_ip} zignorowane.")
-        return jsonify({'message': 'Nieznany ID polecającego.'}), 200
+        
+        print(f"Unknown referral_id: {referral_id}. Click from IP {client_ip} ignored.")
+        return jsonify({'message': 'Unknown referral ID.'}), 200
 
     current_time = datetime.datetime.now()
-    # Pobierz tracker dla danego referral_id
+    
     ip_tracker = unique_ip_clicks_tracker.get(referral_id, {})
 
-    # Sprawdź, czy to IP już kliknęło w ciągu ostatnich 24 godzin
+    
     last_click_time = ip_tracker.get(client_ip)
     if last_click_time:
         time_since_last_click = current_time - last_click_time
         if time_since_last_click < datetime.timedelta(hours=24):
-            print(f"Kliknięcie zduplikowane z IP {client_ip} dla ID {referral_id} w ciągu 24h. Zignorowano.")
-            return jsonify({'message': 'Kliknięcie już zarejestrowane z tego IP w ciągu ostatnich 24 godzin.'}), 200
+            print(f"Duplicate click from IP {client_ip} for ID {referral_id} within 24h. Ignored.")
+            return jsonify({'message': 'Click already registered from this IP within the last 24 hours.'}), 200
 
-    # Jeśli kliknięcie jest unikalne, zarejestruj je
+    
     clicks_db[referral_id].append({
         'ip': client_ip,
         'timestamp': current_time.isoformat()
     })
-    # Zaktualizuj tracker IP
+    
     ip_tracker[client_ip] = current_time
-    unique_ip_clicks_tracker[referral_id] = ip_tracker # Zapisz zaktualizowany tracker
+    unique_ip_clicks_tracker[referral_id] = ip_tracker 
 
-    print(f"Zarejestrowano unikalne kliknięcie dla ID: {referral_id} z IP: {client_ip}")
-    return jsonify({'message': 'Kliknięcie zarejestrowane pomyślnie.'}), 200
+    print(f"Registered unique click for ID: {referral_id} from IP: {client_ip}")
+    return jsonify({'message': 'Click registered successfully.'}), 200
 
 if __name__ == '__main__':
-    # Uruchomienie aplikacji Flask
-    # W środowisku produkcyjnym użyj serwera WSGI (np. Gunicorn, uWSGI)
-    app.run(debug=True, port=5000) # debug=True tylko do celów deweloperskich
+    
+    app.run(debug=True, port=5000)

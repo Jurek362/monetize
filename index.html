@@ -14,25 +14,25 @@
         }
         /* Style dla przycisków, aby miały jednolity wygląd */
         .btn-primary {
-            @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center space-x-2;
+            @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center space-x-2 text-lg; /* Zwiększony padding i rozmiar tekstu dla lepszych celów dotykowych */
         }
         .btn-success {
-            @apply bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center space-x-2;
+            @apply bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center justify-center space-x-2 text-lg; /* Zwiększony padding i rozmiar tekstu dla lepszych celów dotykowych */
         }
         .btn-danger {
             @apply bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out;
         }
         /* Style dla pól input */
         .input-field {
-            @apply mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+            @apply mt-1 block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-base text-lg; /* Zwiększony padding i rozmiar tekstu dla lepszych celów dotykowych */
         }
         /* Styl dla spinnera ładowania */
         .spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-top: 4px solid #fff;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 24px; /* Nieco większy spinner */
+            height: 24px; /* Nieco większy spinner */
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
@@ -44,7 +44,7 @@
 <body class="bg-gradient-to-br from-blue-50 to-purple-100 text-gray-900 flex flex-col min-h-screen">
     <header class="bg-gradient-to-r from-blue-700 to-purple-800 text-white p-4 shadow-xl">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="/" class="text-3xl font-extrabold rounded-md px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 transition duration-300 ease-in-out flex items-center space-x-2">
+            <a href="/" class="text-3xl sm:text-4xl font-extrabold rounded-md px-3 py-1 bg-white bg-opacity-20 hover:bg-opacity-30 transition duration-300 ease-in-out flex items-center space-x-2">
                 <i class="fas fa-link"></i> <span>LinkZyski</span>
             </a>
             <nav>
@@ -55,23 +55,23 @@
         </div>
     </header>
 
-    <main class="container mx-auto p-6 flex-grow flex items-center justify-center">
-        <section id="infoSection" class="bg-white p-10 rounded-xl shadow-2xl mb-8 transform hover:scale-105 transition-transform duration-300 ease-in-out max-w-2xl w-full">
-            <h2 class="text-5xl font-extrabold text-center text-blue-800 mb-6 leading-tight">
+    <main class="container mx-auto p-4 sm:p-6 flex-grow flex items-center justify-center">
+        <section id="infoSection" class="bg-white p-6 sm:p-10 rounded-xl shadow-2xl mb-8 transform hover:scale-105 transition-transform duration-300 ease-in-out max-w-2xl w-full">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-center text-blue-800 mb-4 sm:mb-6 leading-tight">
                 Zarabiaj na Udostępnianiu Linków!
             </h2>
-            <p class="text-xl text-gray-700 text-center mb-8">
+            <p class="text-lg sm:text-xl text-gray-700 text-center mb-6 sm:mb-8">
                 Udostępniaj swój unikalny link do naszej strony i zarabiaj
-                <span class="font-bold text-green-600 text-2xl">0,01 centa</span> za każde unikalne kliknięcie!
+                <span class="font-bold text-green-600 text-xl sm:text-2xl">0,01 centa</span> za każde unikalne kliknięcie!
                 Im więcej osób odwiedzi naszą stronę dzięki Tobie, tym więcej zarobisz.
             </p>
-            <p class="text-lg text-gray-600 text-center">
+            <p class="text-base sm:text-lg text-gray-600 text-center">
                 Zarejestruj się lub zaloguj, aby zacząć zarabiać już dziś!
             </p>
         </section>
 
-        <section id="authSection" class="bg-white p-10 rounded-xl shadow-2xl max-w-md w-full transform hover:scale-105 transition-transform duration-300 ease-in-out hidden">
-            <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Zaloguj się / Zarejestruj</h2>
+        <section id="authSection" class="bg-white p-6 sm:p-10 rounded-xl shadow-2xl max-w-md w-full transform hover:scale-105 transition-transform duration-300 ease-in-out hidden">
+            <h2 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6 sm:mb-8">Zaloguj się / Zarejestruj</h2>
 
             <div id="messageBox" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
                 <strong class="font-bold mr-1">Ups!</strong>
@@ -80,11 +80,11 @@
 
             <form id="loginForm" class="space-y-6">
                 <div>
-                    <label for="loginUsername" class="block text-sm font-medium text-gray-700">Nazwa użytkownika:</label>
+                    <label for="loginUsername" class="block text-base font-medium text-gray-700">Nazwa użytkownika:</label>
                     <input type="text" id="loginUsername" name="username" required minlength="3" maxlength="20" class="input-field" placeholder="Wprowadź nazwę użytkownika">
                 </div>
                 <div>
-                    <label for="loginPassword" class="block text-sm font-medium text-gray-700">Hasło:</label>
+                    <label for="loginPassword" class="block text-base font-medium text-gray-700">Hasło:</label>
                     <input type="password" id="loginPassword" name="password" required minlength="8" maxlength="30" class="input-field" placeholder="Wprowadź hasło">
                 </div>
                 <button type="submit" class="w-full btn-primary" id="loginButton">
@@ -93,17 +93,17 @@
                 </button>
             </form>
 
-            <p class="text-center text-gray-600 mt-8 text-md">
+            <p class="text-center text-gray-600 mt-6 sm:mt-8 text-base sm:text-md">
                 Nie masz konta? <button id="showRegisterForm" class="text-blue-600 hover:text-blue-800 font-semibold transition duration-200">Zarejestruj się</button>
             </p>
 
             <form id="registerForm" class="hidden space-y-6 mt-6">
                 <div>
-                    <label for="registerUsername" class="block text-sm font-medium text-gray-700">Nazwa użytkownika:</label>
+                    <label for="registerUsername" class="block text-base font-medium text-gray-700">Nazwa użytkownika:</label>
                     <input type="text" id="registerUsername" name="username" required minlength="3" maxlength="20" class="input-field" placeholder="Wybierz nazwę użytkownika">
                 </div>
                 <div>
-                    <label for="registerPassword" class="block text-sm font-medium text-gray-700">Hasło:</label>
+                    <label for="registerPassword" class="block text-base font-medium text-gray-700">Hasło:</label>
                     <input type="password" id="registerPassword" name="password" required minlength="8" maxlength="30" class="input-field" placeholder="Wybierz silne hasło">
                 </div>
                 <button type="submit" class="w-full btn-success" id="registerButton">
@@ -112,27 +112,27 @@
                 </button>
             </form>
 
-            <p class="text-center text-gray-600 mt-6 text-md">
+            <p class="text-center text-gray-600 mt-6 text-base sm:text-md">
                 Masz już konto? <button id="showLoginForm" class="text-blue-600 hover:text-blue-800 font-semibold transition duration-200">Zaloguj się</button>
             </p>
         </section>
 
-        <section id="dashboardSection" class="hidden bg-white p-10 rounded-xl shadow-2xl max-w-3xl w-full transform hover:scale-105 transition-transform duration-300 ease-in-out">
-            <h2 class="text-4xl font-bold text-center text-blue-700 mb-8">Twój Panel Użytkownika</h2>
+        <section id="dashboardSection" class="hidden bg-white p-6 sm:p-10 rounded-xl shadow-2xl max-w-3xl w-full transform hover:scale-105 transition-transform duration-300 ease-in-out">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center text-blue-700 mb-6 sm:mb-8">Twój Panel Użytkownika</h2>
 
-            <div class="space-y-6 mb-8">
+            <div class="space-y-6 mb-6 sm:mb-8">
                 <div>
-                    <p class="text-xl font-semibold text-gray-700 flex items-center space-x-2">
+                    <p class="text-lg sm:text-xl font-semibold text-gray-700 flex items-center space-x-2">
                         <i class="fas fa-user-circle text-blue-500"></i> Witaj, <span id="dashboardUsername" class="text-blue-600 font-extrabold"></span>!
                     </p>
                 </div>
-                <div class="bg-blue-50 p-5 rounded-lg border border-blue-200 shadow-inner">
-                    <p class="text-lg font-medium text-gray-700 mb-3 flex items-center space-x-2">
+                <div class="bg-blue-50 p-4 sm:p-5 rounded-lg border border-blue-200 shadow-inner">
+                    <p class="text-base sm:text-lg font-medium text-gray-700 mb-2 sm:mb-3 flex items-center space-x-2">
                         <i class="fas fa-share-alt text-blue-500"></i> Twój unikalny link polecający:
                     </p>
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
-                        <input type="text" id="referralLink" readonly class="flex-grow px-4 py-2 border border-blue-300 rounded-md bg-white text-gray-800 text-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <button id="copyLinkButton" class="btn-primary flex-shrink-0">
+                        <input type="text" id="referralLink" readonly class="flex-grow px-4 py-2 sm:py-3 border border-blue-300 rounded-md bg-white text-gray-800 text-sm sm:text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <button id="copyLinkButton" class="btn-primary flex-shrink-0 text-base sm:text-lg py-2 sm:py-3">
                             <i class="fas fa-copy"></i> Kopiuj
                         </button>
                     </div>
@@ -142,20 +142,20 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-green-50 p-6 rounded-lg border border-green-200 shadow-lg flex flex-col items-center justify-center text-center">
-                    <i class="fas fa-mouse-pointer text-green-600 text-5xl mb-3"></i>
-                    <p class="text-xl font-semibold text-gray-700 mb-2">Łączna liczba unikalnych kliknięć:</p>
-                    <p id="totalClicks" class="text-5xl font-extrabold text-green-700">0</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
+                <div class="bg-green-50 p-5 sm:p-6 rounded-lg border border-green-200 shadow-lg flex flex-col items-center justify-center text-center">
+                    <i class="fas fa-mouse-pointer text-green-600 text-4xl sm:text-5xl mb-2 sm:mb-3"></i>
+                    <p class="text-lg sm:text-xl font-semibold text-gray-700 mb-1 sm:mb-2">Łączna liczba unikalnych kliknięć:</p>
+                    <p id="totalClicks" class="text-4xl sm:text-5xl font-extrabold text-green-700">0</p>
                 </div>
-                <div class="bg-purple-50 p-6 rounded-lg border border-purple-200 shadow-lg flex flex-col items-center justify-center text-center">
-                    <i class="fas fa-dollar-sign text-purple-600 text-5xl mb-3"></i>
-                    <p class="text-xl font-semibold text-gray-700 mb-2">Twoje zarobki:</p>
-                    <p id="totalEarnings" class="text-5xl font-extrabold text-purple-700">$0.00</p>
+                <div class="bg-purple-50 p-5 sm:p-6 rounded-lg border border-purple-200 shadow-lg flex flex-col items-center justify-center text-center">
+                    <i class="fas fa-dollar-sign text-purple-600 text-4xl sm:text-5xl mb-2 sm:mb-3"></i>
+                    <p class="text-lg sm:text-xl font-semibold text-gray-700 mb-1 sm:mb-2">Twoje zarobki:</p>
+                    <p id="totalEarnings" class="text-4xl sm:text-5xl font-extrabold text-purple-700">$0.00</p>
                 </div>
             </div>
 
-            <p class="text-sm text-gray-500 text-center mt-6">
+            <p class="text-xs sm:text-sm text-gray-500 text-center mt-6">
                 Pamiętaj: Zarabiasz 0,01 centa za każde unikalne kliknięcie. System filtruje sztuczne kliknięcia.
                 <br>
                 <strong class="text-gray-700">Opcja wypłaty środków pojawi się, gdy Twoje zarobki osiągną 5.00 $!</strong>
@@ -165,7 +165,7 @@
 
     <footer class="bg-gray-800 text-white p-4 text-center mt-8 shadow-inner">
         <div class="container mx-auto">
-            <p>&copy; 2025 LinkZyski. Wszelkie prawa zastrzeżone.</p>
+            <p class="text-sm">&copy; 2025 LinkZyski. Wszelkie prawa zastrzeżone.</p>
         </div>
     </footer>
 
@@ -428,4 +428,4 @@
         }
     </script>
 </body>
-    </html>
+</html>

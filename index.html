@@ -10,20 +10,6 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Styl dla obszaru reklamowego */
-        .ad-placeholder {
-            min-height: 100px; /* Minimalna wysokość dla reklamy */
-            background-color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            padding: 1rem;
-        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
@@ -43,11 +29,8 @@
             <h2 class="text-4xl font-extrabold text-center text-blue-700 mb-4">Zarabiaj na Udostępnianiu Linków!</h2>
             <p class="text-lg text-gray-700 text-center mb-6">
                 Udostępniaj swój unikalny link do naszej strony i zarabiaj <span class="font-bold text-green-600">0,01 centa za każde unikalne kliknięcie!</span>
-                Im więcej osób odwiedzi naszą stronę dzięki Tobie, tym więcej zarobisz.
+                Im więcej osób odwiedzi naszą stronę dzięki Tobu, tym więcej zarobisz.
             </p>
-            <div class="ad-placeholder">
-                <p>Miejsce na Twoją reklamę (np. Google AdSense)</p>
-            </div>
             <p class="text-md text-gray-600 text-center">
                 Zarejestruj się lub zaloguj, aby zacząć zarabiać już dziś!
             </p>
@@ -115,9 +98,6 @@
                     </div>
                     <p id="copyMessage" class="text-green-600 text-sm mt-2 hidden">Link skopiowany!</p>
                 </div>
-                <div class="ad-placeholder">
-                    <p>Miejsce na Twoją reklamę (np. Google AdSense)</p>
-                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -144,7 +124,11 @@
     </footer>
 
     <script>
-        // Funkcja do wyświetlania komunikatów (sukces/błąd)
+        // Set the backend API URL
+        const BACKEND_API_URL = 'https://monetize.onrender.com'; // Your Render backend URL
+        const FRONTEND_BASE_URL = 'https://aw0.fun'; // Your frontend domain
+
+        // Function to display messages (success/error)
         function showMessage(message, type = 'error') {
             const messageBox = document.getElementById('messageBox');
             const messageText = document.getElementById('messageText');
@@ -161,12 +145,12 @@
             messageBox.classList.remove('hidden');
         }
 
-        // Funkcja do ukrywania komunikatów
+        // Function to hide messages
         function hideMessage() {
             document.getElementById('messageBox').classList.add('hidden');
         }
 
-        // Funkcja do przełączania widoczności formularzy
+        // Function to toggle form visibility
         document.getElementById('showRegisterForm').addEventListener('click', () => {
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('registerForm').classList.remove('hidden');
@@ -183,7 +167,7 @@
             hideMessage();
         });
 
-        // Obsługa rejestracji
+        // Handle registration
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             hideMessage();
@@ -191,7 +175,7 @@
             const password = document.getElementById('registerPassword').value;
 
             try {
-                const response = await fetch('/register', {
+                const response = await fetch(`${BACKEND_API_URL}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
@@ -199,7 +183,7 @@
                 const data = await response.json();
                 if (response.ok) {
                     showMessage(data.message, 'success');
-                    // Po rejestracji automatycznie przełącz na formularz logowania
+                    // After registration, automatically switch to login form
                     document.getElementById('registerForm').classList.add('hidden');
                     document.getElementById('loginForm').classList.remove('hidden');
                     document.getElementById('showRegisterForm').parentNode.classList.remove('hidden');
@@ -208,12 +192,12 @@
                     showMessage(data.error);
                 }
             } catch (error) {
-                showMessage('Wystąpił błąd sieci. Spróbuj ponownie.');
-                console.error('Błąd rejestracji:', error);
+                showMessage('Network error occurred. Please try again.');
+                console.error('Registration error:', error);
             }
         });
 
-        // Obsługa logowania
+        // Handle login
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             hideMessage();
@@ -221,26 +205,26 @@
             const password = document.getElementById('loginPassword').value;
 
             try {
-                const response = await fetch('/login', {
+                const response = await fetch(`${BACKEND_API_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    localStorage.setItem('token', data.token); // Zapisz token JWT
+                    localStorage.setItem('token', data.token); // Save JWT token
                     localStorage.setItem('username', username);
-                    loadDashboard(); // Załaduj panel użytkownika
+                    loadDashboard(); // Load user dashboard
                 } else {
                     showMessage(data.error);
                 }
             } catch (error) {
-                showMessage('Wystąpił błąd sieci. Spróbuj ponownie.');
-                console.error('Błąd logowania:', error);
+                showMessage('Network error occurred. Please try again.');
+                console.error('Login error:', error);
             }
         });
 
-        // Obsługa wylogowania
+        // Handle logout
         document.getElementById('logoutButton').addEventListener('click', () => {
             localStorage.removeItem('token');
             localStorage.removeItem('username');
@@ -251,13 +235,13 @@
             hideMessage();
         });
 
-        // Funkcja do ładowania danych panelu użytkownika
+        // Function to load user dashboard data
         async function loadDashboard() {
             const token = localStorage.getItem('token');
             const username = localStorage.getItem('username');
 
             if (!token || !username) {
-                // Użytkownik nie jest zalogowany, pokaż sekcję logowania/rejestracji
+                // User is not logged in, show login/registration section
                 document.getElementById('authSection').classList.remove('hidden');
                 document.getElementById('dashboardSection').classList.add('hidden');
                 document.getElementById('logoutButton').classList.add('hidden');
@@ -266,20 +250,21 @@
             }
 
             try {
-                const response = await fetch('/dashboard', {
+                const response = await fetch(`${BACKEND_API_URL}/dashboard`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}` // Wysyłanie tokena JWT
+                        'Authorization': `Bearer ${token}` // Send JWT token
                     }
                 });
                 const data = await response.json();
 
                 if (response.ok) {
                     document.getElementById('dashboardUsername').textContent = username;
-                    const referralLink = `${window.location.origin}/?ref=${data.referral_id}`;
+                    // Use the frontend base URL for referral links
+                    const referralLink = `${FRONTEND_BASE_URL}/?ref=${data.referral_id}`;
                     document.getElementById('referralLink').value = referralLink;
                     document.getElementById('totalClicks').textContent = data.clicks;
-                    // Formatowanie zarobków do dwóch miejsc po przecinku
+                    // Format earnings to two decimal places
                     document.getElementById('totalEarnings').textContent = `$${(data.earnings / 100).toFixed(2)}`;
 
                     document.getElementById('authSection').classList.add('hidden');
@@ -287,65 +272,65 @@
                     document.getElementById('dashboardSection').classList.remove('hidden');
                     document.getElementById('logoutButton').classList.remove('hidden');
                 } else {
-                    // Token wygasł lub jest nieprawidłowy, wyloguj użytkownika
+                    // Token expired or invalid, log out user
                     localStorage.removeItem('token');
                     localStorage.removeItem('username');
-                    showMessage(data.error || 'Sesja wygasła. Zaloguj się ponownie.');
+                    showMessage(data.error || 'Session expired. Please log in again.');
                     document.getElementById('authSection').classList.remove('hidden');
                     document.getElementById('dashboardSection').classList.add('hidden');
                     document.getElementById('logoutButton').classList.add('hidden');
                     document.getElementById('infoSection').classList.remove('hidden');
                 }
             } catch (error) {
-                showMessage('Wystąpił błąd podczas ładowania panelu. Spróbuj ponownie.');
-                console.error('Błąd ładowania panelu:', error);
-                // W przypadku błędu sieci, wyloguj użytkownika
+                showMessage('An error occurred while loading the dashboard. Please try again.');
+                console.error('Dashboard loading error:', error);
+                // In case of network error, log out user
                 localStorage.removeItem('token');
                 localStorage.removeItem('username');
                 document.getElementById('authSection').classList.remove('hidden');
                 document.getElementById('dashboardSection').classList.add('hidden');
-                document.getElementById('logoutButton').classList.add('hidden');
                 document.getElementById('infoSection').classList.remove('hidden');
+                document.getElementById('logoutButton').classList.add('hidden');
             }
         }
 
-        // Obsługa kopiowania linku do schowka
+        // Handle copying link to clipboard
         document.getElementById('copyLinkButton').addEventListener('click', () => {
             const referralLinkInput = document.getElementById('referralLink');
             referralLinkInput.select();
-            referralLinkInput.setSelectionRange(0, 99999); // Dla urządzeń mobilnych
+            referralLinkInput.setSelectionRange(0, 99999); // For mobile devices
 
-            // Użyj document.execCommand('copy') dla kompatybilności w iframe
+            // Use document.execCommand('copy') for iframe compatibility
             try {
                 document.execCommand('copy');
                 const copyMessage = document.getElementById('copyMessage');
                 copyMessage.classList.remove('hidden');
                 setTimeout(() => {
                     copyMessage.classList.add('hidden');
-                }, 2000); // Ukryj komunikat po 2 sekundach
+                }, 2000); // Hide message after 2 seconds
             } catch (err) {
-                console.error('Nie udało się skopiować linku: ', err);
+                console.error('Failed to copy link: ', err);
             }
         });
 
-        // Sprawdź status logowania przy ładowaniu strony
+        // Check login status on page load
         window.onload = loadDashboard;
 
-        // Sprawdź, czy strona została załadowana z parametrem 'ref'
+        // Check if the page was loaded with a 'ref' parameter
         const urlParams = new URLSearchParams(window.location.search);
         const refId = urlParams.get('ref');
         if (refId) {
-            // Jeśli jest parametr 'ref', wyślij żądanie do backendu, aby zarejestrować kliknięcie
-            fetch('/track_click', {
+            // If there's a 'ref' parameter, send a request to the backend to track the click
+            fetch(`${BACKEND_API_URL}/track_click`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ referral_id: refId })
             }).then(response => {
                 if (!response.ok) {
-                    console.error('Błąd podczas śledzenia kliknięcia.');
+                    console.error('Error tracking click.');
                 }
             }).catch(error => {
-                console.error('Błąd sieci podczas śledzenia kliknięcia:', error);
+                console.error('Network error while tracking click:', error);
             });
         }
     </script>
